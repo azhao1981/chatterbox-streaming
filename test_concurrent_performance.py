@@ -65,7 +65,7 @@ def test_concurrent_performance(model, text, concurrency=3, rounds=1):
 
     print(f"开始并发测试: {concurrency}个并发请求, {rounds}轮测试")
     print(f"测试文本: {text}")
-    print("=" * 60)
+    print("=" * 60, time.now())
 
     # 创建线程锁保护模型访问
     model_lock = threading.Lock()

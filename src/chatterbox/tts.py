@@ -477,7 +477,7 @@ class ChatterboxTTS:
         if metrics.chunk_count == 0:
             metrics.latency_to_first_chunk = time.time() - start_time
             if print_metrics:
-                print(f"Latency to first chunk: {metrics.latency_to_first_chunk:.3f}s")
+                print(f"Latency to first chunk: {metrics.latency_to_first_chunk:.3f}s, {time.now()}")
 
         metrics.chunk_count += 1
         return audio_tensor, audio_duration, True
