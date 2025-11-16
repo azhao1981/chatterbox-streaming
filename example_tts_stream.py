@@ -104,7 +104,9 @@ else:
     device = "cpu"
 
 print(f"Using device: {device}")
-model = ChatterboxTTS.from_pretrained(device=device)
+from pathlib import Path
+model_path = Path("./ResembleAI/chatterbox")
+model = ChatterboxTTS.from_local(model_path, device=device)
 
 text = "Ezreal and Jinx teamed up with Ahri, Yasuo, and Teemo to take down the enemy's Nexus in an epic late-game pentakill."
 
