@@ -42,8 +42,27 @@ def test_single_request(model, request_id, text, lock):
     }
 
 
+def warmup_model(model):
+    """模型预热 - 发送一个简单请求，不计入统计"""
+    print("正在预热模型...")
+    warmup_text = "Warm up"
+
+    warmup_start = time.time()
+    with threading.Lock():
+        audio_chunks = []
+        for audio_chunk, metrics in model.generate_stream(warmup_text):
+            audio_chunks.append(audio_chunk)
+
+    warmup_time = time.time() - warmup_start
+    print(f"模型预热完成，耗时: {warmup_time:.3f}s")
+    print("-" * 60)
+
+
 def test_concurrent_performance(model, text, concurrency=3, rounds=1):
     """并发性能测试"""
+    # 先进行模型预热
+    warmup_model(model)
+
     print(f"开始并发测试: {concurrency}个并发请求, {rounds}轮测试")
     print(f"测试文本: {text}")
     print("=" * 60)
