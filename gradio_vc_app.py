@@ -5,8 +5,9 @@ from chatterbox.vc import ChatterboxVC
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-
-model = ChatterboxVC.from_pretrained(DEVICE)
+from pathlib import Path
+model_path = Path("./ResembleAI/chatterbox")
+model = ChatterboxVC.from_local(model_path, DEVICE)
 def generate(audio, target_voice_path):
     wav = model.generate(
         audio, target_voice_path=target_voice_path,
@@ -24,4 +25,8 @@ demo = gr.Interface(
 )
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(
+        server_name="0.0.0.0",  # Allow external connections
+        server_port=80,       # Default port
+        show_error=True,        # Show errors in browser
+    )
