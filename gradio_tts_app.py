@@ -76,7 +76,6 @@ with gr.Blocks() as demo:
 
 if __name__ == "__main__":
     demo.queue(
-        server_name="0.0.0.0",  # Allow external connections
         server_port=80,       # Default port
         show_error=True,        # Show errors in browser
         max_size=50,
