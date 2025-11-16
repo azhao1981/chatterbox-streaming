@@ -98,7 +98,9 @@ def test_concurrent_performance(model, text, concurrency=3, rounds=1):
                 print(f"请求 {result['request_id']}: "
                       f"首包延迟={result['first_chunk_latency']:.3f}s, "
                       f"RTF={result['rtf']:.3f}, "
-                      f"总时间={result['total_time']:.3f}s")
+                      f"总时间={result['total_time']:.3f}s"
+                      f"@{datetime.now()}"
+                      )
 
         round_total_time = time.time() - round_start_time
         round_results.sort(key=lambda x: x['request_id'])  # 按请求ID排序
