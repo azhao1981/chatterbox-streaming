@@ -33,7 +33,7 @@ def test_clone_performance(model, text, reference_audio_path, rounds=3):
         total_time = time.time() - start_time
         total_audio = torch.cat(audio_chunks, dim=-1)
         audio_duration = total_audio.shape[-1] / model.sr
-        rtf = audio_duration / total_time
+        rtf = total_time / audio_duration 
 
         # 保存音频文件
         ta.save(f"clone_test_round_{i+1}.wav", total_audio, model.sr)
