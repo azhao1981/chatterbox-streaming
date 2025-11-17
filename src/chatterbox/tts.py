@@ -516,6 +516,7 @@ class ChatterboxTTS:
             and metrics contains timing information
         """
         start_time = time.time()
+        print("Generating...", start_time)
         metrics = StreamingMetrics()
         
         if audio_prompt_path:
