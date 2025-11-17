@@ -5,7 +5,7 @@ import threading
 import argparse
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from chatterbox.tts import ChatterboxTTS
+from src.chatterbox.tts import ChatterboxTTS
 
 
 def test_single_request(model, request_id, text, lock):
