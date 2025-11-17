@@ -6,11 +6,13 @@ import argparse
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from src.chatterbox.tts import ChatterboxTTS
+from datetime import datetime
 
 
 def test_single_request(model, request_id, text, lock):
     """单个请求的测试函数（带锁保护）"""
     start_time = time.time()
+    print("test_single_request", datetime.now())
     audio_chunks = []
     first_chunk_time = None
 
