@@ -1,7 +1,6 @@
 import time
 import torch
 import torchaudio as ta
-import threading
 import argparse
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -9,20 +8,19 @@ from src.chatterbox.tts import ChatterboxTTS
 from datetime import datetime
 
 
-def test_single_request(model, request_id, text, lock):
-    """单个请求的测试函数（带锁保护）"""
+def test_single_request(model, request_id, text):
+    """单个请求的测试函数（无锁并发）"""
     start_time = time.time()
     print("test_single_request", datetime.now())
     audio_chunks = []
     first_chunk_time = None
 
-    # 使用锁保护模型推理
-    with lock:
-        for j, (audio_chunk, metrics) in enumerate(model.generate_stream(text)):
-            audio_chunks.append(audio_chunk)
+    # 直接调用模型，测试真实并发性能
+    for j, (audio_chunk, metrics) in enumerate(model.generate_stream(text)):
+        audio_chunks.append(audio_chunk)
 
-            if j == 0 and first_chunk_time is None:
-                first_chunk_time = time.time()
+        if j == 0 and first_chunk_time is None:
+            first_chunk_time = time.time()
 
     total_time = time.time() - start_time
     total_audio = torch.cat(audio_chunks, dim=-1)
@@ -50,10 +48,9 @@ def warmup_model(model):
     warmup_text = "Warm up"
 
     warmup_start = time.time()
-    with threading.Lock():
-        audio_chunks = []
-        for audio_chunk, metrics in model.generate_stream(warmup_text):
-            audio_chunks.append(audio_chunk)
+    audio_chunks = []
+    for audio_chunk, metrics in model.generate_stream(warmup_text):
+        audio_chunks.append(audio_chunk)
 
     warmup_time = time.time() - warmup_start
     print(f"模型预热完成，耗时: {warmup_time:.3f}s")
@@ -70,8 +67,6 @@ def test_concurrent_performance(model, text, concurrency=3, rounds=1):
     from datetime import datetime
     print("=" * 60, datetime.now())
 
-    # 创建线程锁保护模型访问
-    model_lock = threading.Lock()
     all_results = []
 
     for round_num in range(rounds):
@@ -79,7 +74,7 @@ def test_concurrent_performance(model, text, concurrency=3, rounds=1):
         round_start_time = time.time()
         round_results = []
 
-        # 使用线程池执行并发请求
+        # 使用线程池执行并发请求（无锁真并发）
         with ThreadPoolExecutor(max_workers=concurrency) as executor:
             # 提交所有任务
             futures = []
@@ -88,8 +83,7 @@ def test_concurrent_performance(model, text, concurrency=3, rounds=1):
                     test_single_request,
                     model,
                     f"r{round_num+1}_req{i+1}",
-                    text,
-                    model_lock
+                    text
                 )
                 futures.append(future)
 
